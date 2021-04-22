@@ -41,6 +41,9 @@ public class DataSourceConfig {
         druidDataSource.setMaxActive(dataSourceProperties.getMaxActive());
         druidDataSource.setMaxWait(dataSourceProperties.getMaxWait());
         druidDataSource.setFilters("stat");
+        druidDataSource.setKeepAlive(true);
+        druidDataSource.setRemoveAbandoned(true);
+        druidDataSource.setRemoveAbandonedTimeout(180);
         druidDataSource.setUseGlobalDataSourceStat(true);
         return druidDataSource;
     }

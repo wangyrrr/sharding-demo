@@ -1,14 +1,13 @@
 package com.example.shardingdemo.config;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import org.apache.ibatis.logging.stdout.StdOutImpl;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.sql.DataSource;
 
 /**
  * @Author: WangYuanrong
@@ -16,23 +15,20 @@ import javax.sql.DataSource;
  */
 @EnableTransactionManagement
 @Configuration
+@MapperScan("com.example.shardingdemo.mapper")
 public class MybatisPlusConfig {
 
-
     @Bean
-    public MybatisSqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) {
-        MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSource);
-        MybatisConfiguration configuration = new MybatisConfiguration();
-        configuration.setLogImpl(StdOutImpl.class);
-        sqlSessionFactoryBean.setConfiguration(configuration);
-        return sqlSessionFactoryBean;
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        return mybatisPlusInterceptor;
     }
 
+
     @Bean
-    public MapperScannerConfigurer mapperScannerConfigurer() {
-        MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
-        mapperScannerConfigurer.setBasePackage("com.example.shardingdemo.mapper");
-        return mapperScannerConfigurer;
+    public ConfigurationCustomizer configurationCustomizer() {
+        return configuration -> configuration.setUseDeprecatedExecutor(false);
     }
 }

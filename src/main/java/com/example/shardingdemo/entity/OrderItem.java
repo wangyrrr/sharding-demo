@@ -24,4 +24,7 @@ public class OrderItem implements Serializable {
     private String itemName;
 
     private Date createTime;
+
+    private Boolean deleted;
+
 }

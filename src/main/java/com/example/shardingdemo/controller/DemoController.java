@@ -1,6 +1,8 @@
 package com.example.shardingdemo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.shardingdemo.entity.Order;
 import com.example.shardingdemo.entity.OrderItem;
 import com.example.shardingdemo.mapper.OrderItemMapper;
@@ -44,7 +46,7 @@ public class DemoController {
             orderItem.setItemName(order.getId() + "______0");
             orderItemMapper.insert(orderItem);
             if (i == 9) {
-                throw new RuntimeException();
+//                throw new RuntimeException();
             }
             OrderItem orderItem1 = new OrderItem();
             orderItem1.setOrderId(order.getId());
@@ -56,13 +58,23 @@ public class DemoController {
     }
 
     @PostMapping("update")
-    public String update(@RequestParam Long orderId) {
+    public Boolean update(@RequestParam Long orderId) {
         LambdaUpdateWrapper<Order> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Order::getId, orderId);
         wrapper.set(Order::getTotal, "11111111");
-        orderMapper.update(null, wrapper);
-        return "success";
+        int i = orderMapper.update(null, wrapper);
+        return i > 0;
     }
+
+    @PostMapping("updateEntity")
+    public Boolean updateEntity(@RequestParam Long orderId) {
+        Order order = orderMapper.selectById(orderId);
+        order.setUserId(null);
+        order.setTotal("222222222");
+        int i = orderMapper.updateById(order);
+        return i > 0;
+    }
+
 
     @GetMapping("delete")
     public String delete(@RequestParam Long orderItemId) {
@@ -73,5 +85,13 @@ public class DemoController {
     @GetMapping("list")
     public List<Order> list() {
         return orderMapper.selectList(null);
+    }
+
+    @GetMapping("page")
+    public IPage<Order> page(@RequestParam Integer current,
+                             @RequestParam Integer size) {
+        Page<Order> page = new Page<>(current, size);
+        Page<Order> result = orderMapper.selectPage(page, null);
+        return result;
     }
 }
