@@ -3,13 +3,18 @@ package com.example.shardingdemo.controller;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.shardingdemo.entity.Msg;
 import com.example.shardingdemo.entity.Order;
 import com.example.shardingdemo.entity.OrderItem;
+import com.example.shardingdemo.entity.User;
+import com.example.shardingdemo.mapper.MsgMapper;
 import com.example.shardingdemo.mapper.OrderItemMapper;
 import com.example.shardingdemo.mapper.OrderMapper;
+import com.example.shardingdemo.mapper.UserMapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +35,12 @@ public class DemoController {
 
     @Resource
     private OrderItemMapper orderItemMapper;
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private MsgMapper msgMapper;
 
 
     @Transactional
@@ -93,5 +104,30 @@ public class DemoController {
         Page<Order> page = new Page<>(current, size);
         Page<Order> result = orderMapper.selectPage(page, null);
         return result;
+    }
+
+    @GetMapping("user")
+    public IPage<User> user() {
+        final Page<User> userPage = userMapper.selectPage(new Page<>(), null);
+        return userPage;
+    }
+
+    @PostMapping("user")
+    public User user(@RequestBody User user) {
+        userMapper.insert(user);
+        return user;
+    }
+
+
+    @GetMapping("msg")
+    public IPage<Msg> msg() {
+        final Page<Msg> page = msgMapper.selectPage(new Page<>(), null);
+        return page;
+    }
+
+    @PostMapping("msg")
+    public Msg msg(@RequestBody Msg msg) {
+        msgMapper.insert(msg);
+        return msg;
     }
 }

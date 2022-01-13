@@ -77,6 +77,11 @@ public class DataSourceConfig {
         // 配置分表策略
         orderItemTableRuleConfig.setTableShardingStrategy(new StandardShardingStrategyConfiguration("id", "orderItemTableShardingAlgorithm"));
 
+        // 配置 t_user 表规则
+        ShardingTableRuleConfiguration userTableRuleConfig = new ShardingTableRuleConfiguration("t_user", "ds0.t_user");
+        // 配置 t_msg 表规则
+        ShardingTableRuleConfiguration msgTableRuleConfig = new ShardingTableRuleConfiguration("t_msg", "ds1.t_msg");
+
 
         // 配置分片规则
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
